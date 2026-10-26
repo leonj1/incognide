@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: "${{ (matrix.os) == 'ubuntu-22.04' && fromJSON('[\"self-hosted\",\"linux\",\"x64\"]') || (matrix.os) == 'windows-latest' && fromJSON('[\"self-hosted\",\"windows\",\"x64\"]') || (matrix.os) == 'macos-latest' && fromJSON('[\"self-hosted\",\"macOS\",\"ARM64\"]') || (matrix.os) }}"
     strategy:
       matrix:
         include:
@@ -315,7 +315,7 @@ jobs:
   # Mac App Store build
   build-mas:
     if: github.ref == 'refs/heads/main'
-    runs-on: macos-latest
+    runs-on: [self-hosted, macOS, ARM64]
 
     steps:
       - uses: actions/checkout@v4
@@ -506,7 +506,7 @@ jobs:
 
   update_manifest:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     if: github.ref == 'refs/heads/main'
 
     steps:
@@ -545,7 +545,7 @@ jobs:
 
   notify:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     if: github.ref == 'refs/heads/main'
 
     steps:

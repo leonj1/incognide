@@ -12,7 +12,7 @@ jobs:
   # -------------------------------------------
   check-build-status:
     name: Check build passed
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     outputs:
       build_passed: ${{ steps.check.outputs.build_passed }}
     steps:
@@ -33,7 +33,7 @@ jobs:
     name: Install linters on ${{ matrix.os }}
     needs: check-build-status
     if: needs.check-build-status.outputs.build_passed == 'true'
-    runs-on: ${{ matrix.os }}
+    runs-on: "${{ (matrix.os) == 'macos-latest' && fromJSON('[\"self-hosted\",\"macOS\",\"ARM64\"]') || (matrix.os) == 'windows-latest' && fromJSON('[\"self-hosted\",\"windows\",\"x64\"]') || (matrix.os) == 'ubuntu-latest' && fromJSON('[\"self-hosted\",\"linux\",\"x64\"]') || (matrix.os) }}"
 
     strategy:
       fail-fast: false
@@ -186,7 +186,7 @@ jobs:
   linter-summary:
     name: Linter Install Summary
     needs: install-linters
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64]
     if: always()
     steps:
       - name: Report results
